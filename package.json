@@ -1,0 +1,19 @@
+{
+  "name": "devtinder-backend",
+  "version": "1.0.0",
+  "description": "app for connecting to the developers just like the tinder",
+  "keywords": [
+    "nodejs",
+    "backend"
+  ],
+  "license": "ISC",
+  "author": "Ashish Pandey",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev" : "nodemon src/app.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
