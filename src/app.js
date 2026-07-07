@@ -4,15 +4,22 @@ const connectDB=require("./config/Database")
 const app = express();
 const User = require("./models/users")
 
+app.use(express.json()) // this middleware is converting the json object into the js object for all the  routes.
+
 app.post("/signup" , async(req,res)=>{
-    const user = new User({
-        firstName : "Ashish",
-        lastName : "pandey",
-        emailId  : "ap1700080@gmail.com",
-        password : "15466421"
- });
- await user.save();
- res.send("user addes succesfully")
+    console.log(req.body);
+
+    const user = new User(req.body);
+
+    try{
+        await user.save();
+        res.send("user saved succesfully")
+    }
+    catch(err){
+        res.status(400).send("error saving the data"+ err.message);
+    }
+
+
 })
 
 connectDB()
