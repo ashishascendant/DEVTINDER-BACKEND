@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const validator = require("validator");
 
 const userSchema = new mongoose.Schema({
@@ -43,7 +44,7 @@ const userSchema = new mongoose.Schema({
         }
     },
     Photourl:{
-        type:string,
+        type:String,
         validate(value){
          if(!validator.isURL(value)){
             throw new Error("photo is not an url")
@@ -51,7 +52,7 @@ const userSchema = new mongoose.Schema({
         }
     },
     about:{
-        type:string
+        type:String
     },
     skills:{
       type:[String]
@@ -59,6 +60,41 @@ const userSchema = new mongoose.Schema({
 },{
     timestamps:true,
 });
+
+
+const jwt = require("jsonwebtoken");
+
+
+
+userSchema.methods.getJWT = async function () {
+    const user = this;//maps to the current object , this 
+
+    const token = await jwt.sign(
+        { _id: user._id },
+        "AshPandey@267",
+        {
+            expiresIn: "7d",
+        }//sending the user id and a password which only known by the server.
+            // as we have send the user id in the token also the server will keeps the check of every user also.
+    );
+    return token;
+}; // this is just a helper function which is here to create the jwt token wherever you needed because there can be multiple login places so instead of writting the token creating everywhere you just write the code once for jwt creatin and use it everywhhere you want it.....
+
+
+
+
+userSchema.methods.validatePassword = async function (passwordInputByUser) {
+    const user = this;
+
+    const passwordHash = user.password;
+
+    const isPasswordValid = await bcrypt.compare(
+        passwordInputByUser,
+        passwordHash
+    );
+
+    return isPasswordValid;
+};
 
 const User = new mongoose.model("user",userSchema);
 
