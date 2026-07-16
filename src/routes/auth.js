@@ -6,13 +6,14 @@ const authrouter = express.Router();
 const { validateSignUpData } = require("../utils/validations");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const auth = require("../middlewares/auth")
 const User = require("../models/users");
 const { userAuth } = require("../middlewares/auth");
 
 // new user api .
 authrouter.post("/signup" , async(req,res)=>{
 //the flow of the signup should be : 
+
 // 1. validate the upcoming data on the server level by the validation functions written on the custom level by the user
 validateSignUpData(req);
 
@@ -29,8 +30,8 @@ const user = new User({
     firstName,
     lastName,
     emailId,
-    password: passwordHash,
-});// these are the minimum things which are needed for the signup of the data then after going in the app the user can edit and update the other things like photo etc...
+    password : passwordHash,
+}); // these are the minimum things which are needed for the signup of the data then after going in the app the user can edit and update the other things like photo etc...
 
     try{
         await user.save();
@@ -64,12 +65,22 @@ authrouter.post("/login", async (req, res) => {
             // now the cookie has been sent and stored in the user browser and after each of the request send by the client , the cookie is also bieng sent and then it is bieng always validated you have to validate it if expired then login is requird again.
             //cookie can not be read by the server for it this has a middleware name 
             res.send("Login Successful!!!");
-        } else {
+        } 
+        else {
+            
             throw new Error("Password id not correct");
         }
     } catch (err) {
         res.status(400).send("ERROR : " + err.message);
     }
 });
+
+authrouter.post("/logout", async(req,res)=>{
+    res.cookie("token", null, {
+        expires : new Date(Date.now),
+
+    },
+    res.send("user logged out"))
+}) //anyone who is logged in is just we are sending a cookie with value null in it.... and expire time now 
 
 module.exports = authrouter;

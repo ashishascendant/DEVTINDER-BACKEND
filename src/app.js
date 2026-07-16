@@ -1,12 +1,17 @@
 const express = require("express");
 const connectDB = require("./config/Database");
 const cookieParser = require("cookie-parser");
+const app = express();
 
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const connectionRouter = require("./routes/connection");
 
-const app = express();
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", connectionRouter);
+
+
 
 
 
